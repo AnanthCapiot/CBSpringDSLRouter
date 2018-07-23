@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd        http://camel.apache.org/schema/spring       http://camel.apache.org/schema/spring/camel-spring.xsd">
+    <bean class="org.mycompany.FileRouter" id="routeProcessorBean" scope="singleton"/>
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <propertyPlaceholder id="properties" location="classpath:inboundInfo.properties"/>
+        <route id="simple-route">
+            <from id="route-timer" uri="timer://foo?period=5000"/>
+            <setBody id="route-setBody">
+                <simple>Hello World from camel-context.xml</simple>
+            </setBody>
+            <log id="route-log" message=">>> ${body}"/>
+            <process id="fileRouterInstance" ref="routeProcessorBean"/>
+            <to id="readInboundFile" uri="{{inbound.file.dir}}"/>
+            <log id="_log1" message="Path to read input file is {{inbound.file.dir}}"/>
+        </route>
+    </camelContext>
+</beans>
